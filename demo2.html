@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI童话故事生成器</title>
+    <!-- 引入jQuery库 -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /*移动端首屏样式 [[6,7]]*/
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            background: #f5f5f5;
+        }
+
+        .container {
+            padding: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /*响应式网格布局 [[6,9]]*/
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        /*图片卡片样式 [[12,14]]*/
+        .card {
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            -webkit-border-radius: 12px;
+            /*Safari兼容 [[5]]*/
+            overflow: hidden;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .card.selected {
+            border-color: #ff6b6b;
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+        }
+
+        .card img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        .card p {
+            text-align: center;
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        /*场景选择样式 [[10,12]]*/
+        .scene-item {
+            position: relative;
+            margin: 10px 0;
+        }
+
+        .scene-radio {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .scene-label {
+            display: block;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 12px;
+            background: white;
+            font-size: 16px;
+        }
+
+        .scene-radio:checked+.scene-label {
+            border-color: #4ecdc4;
+            background: #f0fffe;
+        }
+
+        /*按钮样式 [[6,14]]*/
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: #4ecdc4;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            margin: 20px 0;
+            touch-action: manipulation;
+            /*优化触摸响应 [[5]]*/
+        }
+
+        #story-output {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- 动物选择步骤 -->
+        <div id="step1">
+            <h2>选择3种动物伙伴</h2>
+            <div class="grid">
+                <!-- 假数据示例，实际需要替换图片路径 [[10]] -->
+                <div class="card" data-animal="兔子">
+                    <img src="https://q0.itc.cn/q_70/images01/20240307/3cdb0bbef0864638898dff1dfea1f967.jpeg" alt="兔子">
+                    <p>🐰 聪明兔</p>
+                </div>
+                <div class="card" data-animal="兔子">
+                    <img src="https://q0.itc.cn/q_70/images01/20240307/3cdb0bbef0864638898dff1dfea1f967.jpeg" alt="兔子">
+                    <p>🐰 聪明兔</p>
+                </div>
+                <div class="card" data-animal="兔子">
+                    <img src="https://q0.itc.cn/q_70/images01/20240307/3cdb0bbef0864638898dff1dfea1f967.jpeg" alt="兔子">
+                    <p>🐰 聪明兔</p>
+                </div>
+                <div class="card" data-animal="兔子">
+                    <img src="https://q0.itc.cn/q_70/images01/20240307/3cdb0bbef0864638898dff1dfea1f967.jpeg" alt="兔子">
+                    <p>🐰 聪明兔</p>
+                </div>
+                <div class="card" data-animal="兔子">
+                    <img src="https://q0.itc.cn/q_70/images01/20240307/3cdb0bbef0864638898dff1dfea1f967.jpeg" alt="兔子">
+                    <p>🐰 聪明兔</p>
+                </div>
+                <div class="card" data-animal="兔子">
+                    <img src="https://q0.itc.cn/q_70/images01/20240307/3cdb0bbef0864638898dff1dfea1f967.jpeg" alt="兔子">
+                    <p>🐰 聪明兔</p>
+                </div>
+                <div class="card" data-animal="兔子">
+                    <img src="https://q0.itc.cn/q_70/images01/20240307/3cdb0bbef0864638898dff1dfea1f967.jpeg" alt="兔子">
+                    <p>🐰 聪明兔</p>
+                </div>
+                <div class="card" data-animal="兔子">
+                    <img src="https://q0.itc.cn/q_70/images01/20240307/3cdb0bbef0864638898dff1dfea1f967.jpeg" alt="兔子">
+                    <p>🐰 聪明兔</p>
+                </div>
+                <div class="card" data-animal="兔子">
+                    <img src="https://q0.itc.cn/q_70/images01/20240307/3cdb0bbef0864638898dff1dfea1f967.jpeg" alt="兔子">
+                    <p>🐰 聪明兔</p>
+                </div>
+                <div class="card" data-animal="兔子">
+                    <img src="https://q0.itc.cn/q_70/images01/20240307/3cdb0bbef0864638898dff1dfea1f967.jpeg" alt="兔子">
+                    <p>🐰 聪明兔</p>
+                </div>
+                <!-- 重复其他9种动物... -->
+            </div>
+        </div>
+
+        <!-- 场景选择步骤 -->
+        <div id="step2" style="display:none;">
+            <h2>选择冒险场景</h2>
+            <!-- 假数据示例 [[10]] -->
+            <div class="scene-item">
+                <input class="scene-radio" type="radio" name="scene" id="scene1" value="魔法森林">
+                <label class="scene-label" for="scene1">🌳 魔法森林</label>
+            </div>
+            <div class="scene-item">
+                <input class="scene-radio" type="radio" name="scene" id="scene2" value="城市">
+                <label class="scene-label" for="scene2">🌳 城市</label>
+            </div>
+            <div class="scene-item">
+                <input class="scene-radio" type="radio" name="scene" id="scene3" value="农村">
+                <label class="scene-label" for="scene3">🌳 农村</label>
+            </div>
+            <div class="scene-item">
+                <input class="scene-radio" type="radio" name="scene" id="scene4" value="乡间">
+                <label class="scene-label" for="scene4">🌳 乡间</label>
+            </div>
+        </div>
+
+        <!-- 故事输出 -->
+        <button onclick="callDeepSeek()" id=" generate-btn" class="btn">生成童话故事</button>
+        <div id="story-output"></div>
+    </div>
+
+    <script>
+        // 已选动物数组
+        let selectedAnimals = []
+
+        // 动物选择逻辑 [[1,3]]
+        $('.card').click(function () {
+            const animal = $(this).data('animal')
+            if ($(this).hasClass('selected')) {
+                $(this).removeClass('selected')
+                selectedAnimals = selectedAnimals.filter(a => a !== animal)
+            } else {
+                if (selectedAnimals.length < 3) {
+                    $(this).addClass('selected')
+                    selectedAnimals.push(animal)
+                }
+            }
+
+            // 选满3个后显示场景选择
+            if (selectedAnimals.length === 3) {
+                $('#step1').hide()
+                $('#step2').show()
+            }
+        })
+
+        // 场景选择逻辑
+        $('.scene-radio').change(function () {
+            if ($(this).is(':checked')) {
+                $('#generate-btn').show()
+            }
+        })
+
+        // 生成故事逻辑 [[1]]
+        /*$('#generate-btn').click(function () {
+            const scene = $('input[name="scene"]:checked').val()
+
+            // 假API调用示例，实际需要替换为真实接口 [[注释说明]]
+            $.post('https://api.example.com/deepseek-v3', {
+                // 请在此处填写实际API参数
+                animals: selectedAnimals,
+                scene: scene,
+                api_key: 'sk-wrcbwflldrmksxylmlkhouvjbhpbztmisxkzwwpjmyoeuhrp' // 需要替换为真实API密钥
+            }, function (response) {
+                $('#story-output').text(response.story)
+            }).fail(function () {
+                // 模拟假数据返回
+                const demoStory = `${selectedAnimals.join('、')}在${scene}展开冒险...` // 示例假数据
+                $('#story-output').text(demoStory)
+            })
+        })*/
+        const API_KEY = 'sk-wrcbwflldrmksxylmlkhouvjbhpbztmisxkzwwpjmyoeuhrp'; // [[3,6,15]]
+        const MODEL = 'deepseek-ai/DeepSeek-V3'; // [[3,9,15]]
+
+        async function callDeepSeek() {
+            const scene = $('input[name="scene"]:checked').val()
+
+            const inputText = `设计一个${selectedAnimals.join('、')}在${scene}展开冒险的50字童话故事`
+            //const responseArea = document.getElementById('response');
+            //responseArea.innerHTML = "思考中...";
+
+            try {
+                const response = await fetch('https://api.siliconflow.cn/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        model: MODEL,
+                        messages: [{
+                            role: "user",
+                            content: inputText
+                        }],
+                        temperature: 0.7
+                    })
+                });
+
+                const data = await response.json();
+                $('#story-output').text(data.choices[0].message.content +
+                    `<br>本次消耗: ${data.usage.total_tokens} tokens`)
+                //responseArea.innerHTML = data.choices[0].message.content +
+                //    `<br>本次消耗: ${data.usage.total_tokens} tokens`; // [[2,11,12]]
+            } catch (error) {
+                $('#story-output').text("请求失败: " + error.message)
+            }
+        }
+    </script>
+</body>
+
+</html>
